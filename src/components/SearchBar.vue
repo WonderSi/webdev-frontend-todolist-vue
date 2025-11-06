@@ -38,7 +38,7 @@
 
         &__submit {
             position: absolute;
-            top: 8%;
+            top: 18%;
             right: 2%;
             color: var(--input);
             border: none;
