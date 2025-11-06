@@ -16,5 +16,19 @@
 </script>
 
 <style scoped lang="scss">
+    .header {
+        display: flex;
+        flex-direction: column;
 
+        &__name {
+            margin-top: 40px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        &__nav {
+            display: flex;
+            flex-direction: row;
+        }
+    }
 </style>
