@@ -1,3 +1,5 @@
+@use "sass:map";
+
 $colors: (
     black: #252525,
     black-light: #666666,
@@ -17,20 +19,20 @@ $colors: (
 
 $themes: (
     light: (
-        bg: map-get($colors, white),
-        text: map-get($colors, black),
-        text-crossed: map-get($colors, black-opacity),
-        input: map-get($colors, purple),
-        input-shadow: map-get($colors, purple-shadow),
-        input-text: map-get($colors, purple-light),
+        bg: map.get($colors, white),
+        text: map.get($colors, black),
+        text-crossed: map.get($colors, black-opacity),
+        input: map.get($colors, purple),
+        input-shadow: map.get($colors, purple-shadow),
+        input-text: map.get($colors, purple-light),
     ),
     dark: (
-        bg: map-get($colors, black),
-        text: map-get($colors, white),
-        text-crossed: map-get($colors, white-opacity),
-        input: map-get($colors, white),
-        input-shadow: map-get($colors, white-shadow),
-        input-text: map-get($colors, black-light),
+        bg: map.get($colors, black),
+        text: map.get($colors, white),
+        text-crossed: map.get($colors, white-opacity),
+        input: map.get($colors, white),
+        input-shadow: map.get($colors, white-shadow),
+        input-text: map.get($colors, black-light),
     )
 );
 
@@ -48,27 +50,27 @@ $breakpoints: (
 @function generate-theme-vars($theme-map) {
     $vars: ();
     @each $key, $value in $theme-map {
-        $vars: map-merge($vars, ( #{$key}: $value ));
+        $vars: map.merge($vars, ( #{$key}: $value ));
     }
     @return $vars;
 }
 
 :root, [data-theme='light'] {
-    $light-vars: generate-theme-vars(map-get($themes, light));
+    $light-vars: generate-theme-vars(map.get($themes, light));
     @each $key, $value in $light-vars {
         --#{$key}: #{$value};
     }
 
-    --icon-gray: #{map-get($colors, gray)};
-    --icon-red: #{map-get($colors, red)};
-    --icon-purple: #{map-get($colors, purple)};
+    --icon-gray: #{map.get($colors, gray)};
+    --icon-red: #{map.get($colors, red)};
+    --icon-purple: #{map.get($colors, purple)};
 
-    --button: #{map-get($colors, purple)};
-    --button-focus: #{map-get($colors, purple-focus)};
-    --button-focus-light: #{map-get($colors, purple-opacity)};
-    --reverse-button-border: #{map-get($colors, purple)};
-    --reverse-button: #{map-get($colors, white)};
-    --reverse-button-text-color: #{map-get($colors, purple)};
+    --button: #{map.get($colors, purple)};
+    --button-focus: #{map.get($colors, purple-focus)};
+    --button-focus-light: #{map.get($colors, purple-opacity)};
+    --reverse-button-border: #{map.get($colors, purple)};
+    --reverse-button: #{map.get($colors, white)};
+    --reverse-button-text-color: #{map.get($colors, purple)};
 
     @each $key, $value in $breakpoints {
         --#{$key}: #{$value};
@@ -76,7 +78,7 @@ $breakpoints: (
 }
 
 [data-theme='dark'] {
-    $dark-vars: generate-theme-vars(map-get($themes, dark));
+    $dark-vars: generate-theme-vars(map.get($themes, dark));
     @each $key, $value in $dark-vars {
         --#{$key}: #{$value};
     }
