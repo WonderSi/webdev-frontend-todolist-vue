@@ -28,7 +28,7 @@
             border-color: var(--input);
             background-color: var(--bg);
             color: var(--text);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             &::placeholder { color: var(--input-text);}
             &:focus {
                 outline: none;
