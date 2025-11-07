@@ -3,6 +3,7 @@
         <div class="app__container">
             <Header/>
             <TodoList/> 
+            <AddButton/>
         </div>
     </div>
 </template>
@@ -10,6 +11,7 @@
 <script setup>
     import Header from '@/components/Header.vue';
     import TodoList from '@/components/TodoList.vue';
+    import AddButton from '@/components/AddButton.vue';
 </script>
 
 <style scoped lang="scss">
