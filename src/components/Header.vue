@@ -29,6 +29,8 @@
         &__nav {
             display: flex;
             flex-direction: row;
+            gap: 15px;
+            margin-top: 10px;
         }
     }
 </style>
