@@ -1,6 +1,10 @@
 <template>
-    <Header/>
-    <TodoList/> 
+    <div class="app">
+        <div class="app__container">
+            <Header/>
+            <TodoList/> 
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -9,5 +13,17 @@
 </script>
 
 <style scoped lang="scss">
+    .app {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        height: 100vh;
 
+        &__container {
+            width: fit-content;
+            height: 100%;
+            position: relative;
+            box-sizing: border-box;
+        }
+    }
 </style>
