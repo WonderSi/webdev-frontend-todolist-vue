@@ -4,6 +4,7 @@
             <Header/>
             <TodoList/> 
             <AddButton/>
+            <AddTaskModal/>
         </div>
     </div>
 </template>
@@ -12,6 +13,7 @@
     import Header from '@/components/Header.vue';
     import TodoList from '@/components/TodoList.vue';
     import AddButton from '@/components/AddButton.vue';
+    import AddTaskModal from './components/AddTaskModal.vue';
 </script>
 
 <style scoped lang="scss">
