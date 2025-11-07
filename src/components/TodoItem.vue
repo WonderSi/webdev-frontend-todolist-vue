@@ -1,5 +1,34 @@
 <template>
-
+    <li class="task-item">
+        <input  
+            type="checkbox" 
+            class="task-item__checkbox" 
+            :id="taskId" 
+            v-model="checkedAttr"
+        />
+        <span 
+            :for="taskId" 
+            class="task-item__span"
+        >
+            txt
+        </span>
+        <div class="task-item__actions">
+        <button class="task-item__action task-item__action--edit" aria-label="Edit">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8.67272 5.99106L2 12.6637V16H5.33636L12.0091 9.32736M8.67272 5.99106L11.0654 3.59837L11.0669 3.59695C11.3962 3.26759 11.5612 3.10261 11.7514 3.04082C11.9189 2.98639 12.0993 2.98639 12.2669 3.04082C12.4569 3.10257 12.6217 3.26735 12.9506 3.59625L14.4018 5.04738C14.7321 5.37769 14.8973 5.54292 14.9592 5.73337C15.0136 5.90088 15.0136 6.08133 14.9592 6.24885C14.8974 6.43916 14.7324 6.60414 14.4025 6.93398L14.4018 6.93468L12.0091 9.32736M8.67272 5.99106L12.0091 9.32736" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+        <button class="task-item__action task-item__action--delete" aria-label="Delete">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3.87414 7.61505C3.80712 6.74386 4.49595 6 5.36971 6H12.63C13.5039 6 14.1927 6.74385 14.1257 7.61505L13.6064 14.365C13.5463 15.1465 12.8946 15.75 12.1108 15.75H5.88894C5.10514 15.75 4.45348 15.1465 4.39336 14.365L3.87414 7.61505Z" stroke="currentColor"/>
+            <path d="M14.625 3.75H3.375" stroke="currentColor" stroke-linecap="round"/>
+            <path d="M7.5 2.25C7.5 1.83579 7.83577 1.5 8.25 1.5H9.75C10.1642 1.5 10.5 1.83579 10.5 2.25V3.75H7.5V2.25Z" stroke="currentColor"/>
+            <path d="M10.5 9V12.75" stroke="currentColor" stroke-linecap="round"/>
+            <path d="M7.5 9V12.75" stroke="currentColor" stroke-linecap="round"/>
+            </svg>
+        </button>
+        </div>
+    </li>
 </template>
 
 <script setup>
@@ -7,5 +36,85 @@
 </script>
 
 <style scoped lang="scss">
-
+    .task-item {
+        display: flex;
+        align-items: center;
+        padding-block: 17px;
+        padding-inline: 3px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        gap: 17px;
+        &__checkbox {
+            width: 26px;
+            height: 26px;
+            border-radius: 4px;
+            cursor: pointer;
+            &:checked {
+                accent-color: var(--button);
+                &:hover {
+                    accent-color: var(--button-focus);
+                }   
+            }
+            &:focus {
+                box-shadow: none;
+            }
+        }
+    
+        &__span,
+        &__edit-input {
+            font-weight: 500;
+            flex: 1;
+            padding: 2px 6px;
+            border: none;
+        }
+    
+        &__actions {
+            display: flex;
+            gap: 10px;
+        }
+    
+        &__action {
+            background: none;
+            border: none;
+            color: var(--icon-gray-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            svg {
+                @include flex-center();
+            }
+            &--edit {
+                &:hover {
+                    color: var(--icon-purple);
+                }
+            }
+            &--delete {
+                &:hover {
+                    color: var(--icon-red);
+                }
+            }
+        }
+        &--completed {
+            .task-item__span {
+            color: var(--text-crossed);
+            text-decoration: line-through;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+            }
+        }
+        &--removing {
+            transform: translateX(100%);
+            opacity: 0;
+            max-height: 0;
+            padding: 0;
+            margin: 0;
+        }
+    
+        button {
+            opacity: 0;
+        }
+    
+        &:hover {
+            button {
+                opacity: 1;
+            }
+        }
+    }
 </style>
