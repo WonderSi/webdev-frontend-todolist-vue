@@ -1,11 +1,11 @@
 <template>
-    <div class="modal" id="addTaskModal">
-        <div class="modal__overlay"></div>
+    <div class="modal" id="addTaskModal" :style="{display: props.open ? 'block' : 'none'}">
+        <div class="modal__overlay" @click="handleCancel"></div>
         <div class="modal__content"> 
             <h2 class="modal__title">NEW NOTE</h2>
             <input type="text" class="modal__input" placeholder="Input your note..." name="" id="">
             <div class="modal__buttons">
-                <button class="modal__button modal__button--cancel">
+                <button class="modal__button modal__button--cancel" @click="handleCancel">
                     CANCEL
                 </button>
                 <button class="modal__button modal__button--apply">
@@ -17,12 +17,20 @@
 </template>
 
 <script setup>
+const props = defineProps({
+    open: Boolean
+})
 
+const emit = defineEmits(['close'])
+
+function handleCancel() {
+    emit('close');
+}
 </script>
 
 <style scoped lang="scss">
     .modal {
-        display: block;
+        display: none;
         position: fixed;
         top: 0;
         left: 0;

@@ -3,17 +3,28 @@
         <div class="app__container">
             <Header/>
             <TodoList/> 
-            <AddButton/>
-            <AddTaskModal/>
+            <AddButton @click="openModal"/>
+            <AddTaskModal :open="modalOpen" @close="closeModal"/>
         </div>
     </div>
 </template>
 
 <script setup>
+    import { ref } from 'vue';
     import Header from '@/components/Header.vue';
     import TodoList from '@/components/TodoList.vue';
     import AddButton from '@/components/AddButton.vue';
     import AddTaskModal from './components/AddTaskModal.vue';
+
+    const modalOpen = ref(false)
+
+    function openModal() {
+        modalOpen.value = true;
+    }
+
+    function closeModal() {
+        modalOpen.value = false;
+    }
 </script>
 
 <style scoped lang="scss">
