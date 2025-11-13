@@ -1,22 +1,118 @@
 <template>
-    <div class="filters-dropdown">
-        <button class="filters-dropdown__button">
-            <span class="filter-span">ALL</span>
+    <div class="filters-dropdown" ref="dropdownRef">
+        <button 
+            class="filters-dropdown__button"
+            :class="{ active: isOpen }"
+            @click="toggleDropdown"    
+        >
+            <span class="filter-span">{{ currentFilterText }}</span>
             <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4 4L1 1" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M7 1L4 4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </button>
-        <div class="filters-dropdown__menu">
-            <div class="dropdown-item active" data-filter="all">All</div>
-            <div class="dropdown-item" data-filter="complete">Complete</div>
-            <div class="dropdown-item" data-filter="incomplete">Incomplete</div>
+        <div class="filters-dropdown__menu" :class="{ active: isOpen }">
+            <div 
+                class="dropdown-item" 
+                :class="{ active: currentFilter === 'all' }"
+                @click="selectFilter('all')"
+            >
+                All
+            </div>
+            <div 
+                class="dropdown-item" 
+                :class="{ active: currentFilter === 'complete' }"
+                @click="selectFilter('complete')"
+            >
+                Complete
+            </div>
+            <div 
+                class="dropdown-item" 
+                :class="{ active: currentFilter === 'incomplete' }"
+                @click="selectFilter('incomplete')"
+            >
+                Incomplete
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
+    import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
 
+    const STORAGE_KEYS = {
+        FILTER: 'todoFilter'
+    }
+    
+    const isOpen = ref(false);
+    const currentFilter = ref('all');
+    const dropdownRef = ref(null);
+    const todoListRef = inject('todoListRef', null);
+
+    const currentFilterText = computed(() => {
+        const filterMap = {
+            'all': 'ALL',
+            'complete': 'COMPLETE',
+            'incomplete': 'INCOMPLETE'
+        }
+        return filterMap[currentFilter.value] || 'ALL';
+    })
+
+    function toggleDropdown(e) {
+        e.stopPropagation();
+        isOpen.value = !isOpen.value;
+    }
+
+    function selectFilter(filter) {
+        currentFilter.value = filter;
+        isOpen.value = false;
+        saveFilterToStorage(filter);
+
+        if(todoListRef?.value) {
+            todoListRef.value.setFilter(filter);
+        }
+    }
+
+    function loadFilterFromStorage() {
+        try {
+            if (typeof window === 'undefined') return;
+            
+            const savedFilter = localStorage.getItem(STORAGE_KEYS.FILTER);
+            if (savedFilter) {
+                currentFilter.value = savedFilter;
+                if (todoListRef?.value) {
+                    todoListRef.value.setFilter(savedFilter);
+                }
+            }
+        } catch (e) {
+            console.error('Error loading filter:', e)
+        }
+    }
+
+    function saveFilterToStorage(filter) {
+        try {
+            if (typeof window === 'undefined') return;
+            
+            localStorage.setItem(STORAGE_KEYS.FILTER, filter);
+        } catch (e) {
+            console.error('Error saving filter:', e)
+        }
+    }
+
+    function handleClickOutside(e) {
+        if (dropdownRef.value && !dropdownRef.value.contains(e.target)) {
+            isOpen.value = false;
+        }
+    }
+
+    onMounted(() => {
+        loadFilterFromStorage();
+        document.addEventListener('click', handleClickOutside);
+    });
+
+    onUnmounted(() => {
+        document.removeEventListener('click', handleClickOutside);
+    });
 </script>
 
 <style scoped lang="scss">
@@ -100,5 +196,17 @@
             background-color: var(--button-focus-light);
         }
 
+    }
+
+    @include mobile {
+        .filters-dropdown {
+            &__button {
+                font-size: 14px;
+            }
+        }
+
+        .dropdown-item {
+            font-size: 12px;
+        }
     }
 </style>

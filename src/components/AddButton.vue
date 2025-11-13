@@ -34,4 +34,14 @@
             @include flex-center();
         }
     }
+
+    @include mobile {
+        .add-button {
+            padding: 5px;
+
+            svg {
+                transform: scale(0.8);
+            }
+        }
+    }
 </style>

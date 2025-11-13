@@ -36,13 +36,6 @@ $themes: (
     )
 );
 
-$breakpoints: (
-    mobile-max: 767px,
-    tablet-min: 768px,
-    tablet-max: 1023px,
-    desktop-min: 1024px
-);
-
 /// Функция для генерации CSS custom properties из карты темы
 /// 
 /// @param {type} $theme-map - Карта с ключами и значениями переменных темы
@@ -72,10 +65,6 @@ $breakpoints: (
     --reverse-button-border: #{map.get($colors, purple)};
     --reverse-button: #{map.get($colors, white)};
     --reverse-button-text: #{map.get($colors, purple)};
-
-    @each $key, $value in $breakpoints {
-        --#{$key}: #{$value};
-    }
 }
 
 [data-theme='dark'] {

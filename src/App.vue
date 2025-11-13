@@ -2,29 +2,19 @@
     <div class="app">
         <div class="app__container">
             <Header/>
-            <TodoList/> 
-            <AddButton @click="openModal"/>
-            <AddTaskModal :open="modalOpen" @close="closeModal"/>
+            <TodoList ref="todoListRef"/> 
         </div>
     </div>
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+    import { provide, ref } from 'vue';
     import Header from '@/components/Header.vue';
     import TodoList from '@/components/TodoList.vue';
-    import AddButton from '@/components/AddButton.vue';
-    import AddTaskModal from './components/AddTaskModal.vue';
 
-    const modalOpen = ref(false)
+    const todoListRef = ref(null);
 
-    function openModal() {
-        modalOpen.value = true;
-    }
-
-    function closeModal() {
-        modalOpen.value = false;
-    }
+    provide('todoListRef', todoListRef);
 </script>
 
 <style scoped lang="scss">

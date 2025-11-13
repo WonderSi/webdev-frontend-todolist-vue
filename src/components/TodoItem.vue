@@ -1,24 +1,44 @@
 <template>
-    <li class="task-item">
+    <li class="task-item " :class="{ 'task-item--completed': task.completed, 'task-item--removing': isRemoving }">
         <input  
             type="checkbox" 
             class="task-item__checkbox" 
-            :id="taskId" 
-            v-model="checkedAttr"
+            :id="task.id" 
+            v-model="task.completed"
+            @change="$emit('toggle','task.id')"
         />
         <span 
-            :for="taskId" 
+            v-if="!isEditing"
+            :for="task.id" 
             class="task-item__span"
         >
-            txt
+            {{ task.text }}
         </span>
+        <input 
+            v-else
+            type="text"
+            class="task-item__edit-input"
+            v-model="editText"
+            ref="editInput"
+            @blur="saveEdit"
+            @keydown.enter="saveEdit"
+            @keydown.esc="cancelEdit"
+        />
         <div class="task-item__actions">
-        <button class="task-item__action task-item__action--edit" aria-label="Edit">
+        <button 
+            class="task-item__action task-item__action--edit" 
+            aria-label="Edit"
+            @click="startEdit"
+        >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M8.67272 5.99106L2 12.6637V16H5.33636L12.0091 9.32736M8.67272 5.99106L11.0654 3.59837L11.0669 3.59695C11.3962 3.26759 11.5612 3.10261 11.7514 3.04082C11.9189 2.98639 12.0993 2.98639 12.2669 3.04082C12.4569 3.10257 12.6217 3.26735 12.9506 3.59625L14.4018 5.04738C14.7321 5.37769 14.8973 5.54292 14.9592 5.73337C15.0136 5.90088 15.0136 6.08133 14.9592 6.24885C14.8974 6.43916 14.7324 6.60414 14.4025 6.93398L14.4018 6.93468L12.0091 9.32736M8.67272 5.99106L12.0091 9.32736" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </button>
-        <button class="task-item__action task-item__action--delete" aria-label="Delete">
+        <button 
+            class="task-item__action task-item__action--delete" 
+            aria-label="Delete"
+            @click="deleteTask"
+        >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3.87414 7.61505C3.80712 6.74386 4.49595 6 5.36971 6H12.63C13.5039 6 14.1927 6.74385 14.1257 7.61505L13.6064 14.365C13.5463 15.1465 12.8946 15.75 12.1108 15.75H5.88894C5.10514 15.75 4.45348 15.1465 4.39336 14.365L3.87414 7.61505Z" stroke="currentColor"/>
             <path d="M14.625 3.75H3.375" stroke="currentColor" stroke-linecap="round"/>
@@ -32,7 +52,59 @@
 </template>
 
 <script setup>
+    import { ref, nextTick } from 'vue';
 
+    const props = defineProps({
+        task: {
+            type: Object,
+            required: true
+        }
+    });
+
+    const emit = defineEmits(['toggle', 'delete', 'edit']);
+
+    const isEditing = ref(false);
+    const isRemoving = ref(false);
+    const editText = ref('');
+    const editInput = ref(null);
+
+    function startEdit() {
+        if (props.task.completed) {
+            alert('The change is not available!');
+            return;
+        }
+        
+        isEditing.value = true;
+        editText.value = props.task.text;
+        
+        nextTick(() => {
+            if (editInput.value) {
+                editInput.value.focus();
+                const length = editText.value.length;
+                editInput.value.setSelectionRange(length, length);
+            }
+        });
+    }
+
+    function saveEdit() {
+        const newText = editText.value.trim();
+        if (newText) {
+            emit('edit', { id: props.task.id, newText });
+        }
+        isEditing.value = false;
+    }
+
+    function cancelEdit() {
+        editText.value = props.task.text;
+        isEditing.value = false;
+    }
+
+    function deleteTask() {
+        isRemoving.value = true;
+        setTimeout(() => {
+            emit('delete', props.task.id);
+        }, 300);
+    }
 </script>
 
 <style scoped lang="scss">

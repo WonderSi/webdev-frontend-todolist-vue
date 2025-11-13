@@ -1,10 +1,22 @@
 <template>
     <main class="todo-list">
-        <ul class="todo-list__tasks">
-            <TodoItem/>
-            <TodoItem/>
+        <ul 
+            class="todo-list__tasks"
+            v-show="filteredTasks.length > 0"
+        >
+            <TodoItem
+                v-for="task in filteredTasks"
+                :key="task.id"
+                :task="task"
+                @toggle="handleToggle"
+                @delete="handleDelete"
+                @edit="handleEdit"
+            />
         </ul>
-        <div class="todo-list__empty">
+        <div 
+            class="todo-list__empty"
+            v-show="filteredTasks.length === 0"    
+        >
             <svg width="221" height="174" viewBox="0 0 221 174" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M111.934 168.852C153.422 167.978 186.917 160.771 186.748 152.756C186.578 144.741 152.808 138.952 111.319 139.827C69.8311 140.702 36.3357 147.908 36.5053 155.923C36.6749 163.939 70.4453 169.727 111.934 168.852Z" fill="#6C63FF"/>
             <path opacity="0.7" d="M111.934 168.852C153.422 167.978 186.917 160.771 186.748 152.756C186.578 144.741 152.808 138.952 111.319 139.827C69.8311 140.702 36.3357 147.908 36.5053 155.923C36.6749 163.939 70.4453 169.727 111.934 168.852Z" fill="white"/>
@@ -18,7 +30,7 @@
             <path d="M54.4278 155.601C54.4278 155.601 55.209 154.508 55.1273 154.118C53.7508 153.888 52.3593 153.758 50.9639 153.731C49.1336 153.731 46.5018 154.538 46.0602 154.778C45.6186 155.017 45.8585 155.603 45.8585 155.603C45.8585 155.603 47.4642 156.19 48.5388 156.133C49.6135 156.077 52.6103 155.728 54.4278 155.601Z" fill="#F1F1F1"/>
             <path d="M56.0386 154.154C56.0386 154.154 55.8727 155.117 55.2983 155.588C55.2983 155.588 57.5957 155.843 58.4866 155.079C59.3775 154.314 56.9525 154.194 56.0386 154.154Z" fill="#F1F1F1"/>
             <path d="M101.042 159.102C101.042 159.102 102.063 160.096 102.091 160.491C100.792 160.889 99.4645 161.187 98.1194 161.38C96.3325 161.586 93.5603 161.125 93.0702 160.931C92.5801 160.738 92.6695 160.136 92.6695 160.136C92.6695 160.136 94.0939 159.372 95.1583 159.285C96.2228 159.199 99.2349 159.196 101.042 159.102Z" fill="#F1F1F1"/>
-            <path d="M102.972 160.345C102.972 160.345 102.571 159.408 101.897 159.01C101.897 159.01 104.077 158.47 105.134 159.127C106.191 159.785 103.855 160.198 102.972 160.345Z" fill="#F1F1F1"/>
+            <path d="M102.972 160.345Ca102.972 160.345 102.571 159.408 101.897 159.01C101.897 159.01 104.077 158.47 105.134 159.127C106.191 159.785 103.855 160.198 102.972 160.345Z" fill="#F1F1F1"/>
             <path d="M114.464 156.35C114.464 156.35 115.391 155.374 115.365 154.979C114.035 154.558 112.675 154.236 111.296 154.016C109.481 153.761 106.765 154.194 106.293 154.368C105.821 154.541 105.979 155.158 105.979 155.158C105.979 155.158 107.485 155.963 108.56 156.057C109.635 156.151 112.647 156.223 114.464 156.35Z" fill="#F1F1F1"/>
             <path d="M116.264 155.142C116.264 155.142 115.963 156.075 115.33 156.46C115.33 156.46 117.571 157.041 118.556 156.404C119.541 155.767 117.168 155.308 116.264 155.142Z" fill="#F1F1F1"/>
             <path d="M129.908 158.279C129.908 158.279 130.86 159.346 130.85 159.741C129.525 160.043 128.178 160.24 126.822 160.33C125.02 160.404 122.296 159.729 121.819 159.51C121.341 159.29 121.482 158.687 121.482 158.687C121.482 158.687 122.957 158.019 124.034 158.024C125.112 158.029 128.098 158.23 129.908 158.279Z" fill="#F1F1F1"/>
@@ -118,17 +130,135 @@
             </linearGradient>
             <linearGradient id="paint1_linear_18_594" x1="91.4595" y1="88.074" x2="82.2787" y2="125.234" gradientUnits="userSpaceOnUse">
             <stop stop-color="white"/>
-            <stop offset="1"/>
-            </linearGradient>
-            </defs>
+                <stop offset="1"/>
+                </linearGradient>
+                </defs>
             </svg>
             <p class="todo-list__empty-text">Empty...</p>
         </div>
+        <AddButton @click="handleAddButtonClick"/>
+        <AddTaskModal
+            :open="modalOpen"
+            @close="modalOpen = false"
+            @add-task="addTask"
+        />
     </main>
 </template>
 
 <script setup>
+    import { ref, computed, onMounted } from 'vue';
     import TodoItem from '@/components/TodoItem.vue';
+    import AddButton from '@/components/AddButton.vue';
+    import AddTaskModal from '@/components/AddTaskModal.vue';
+
+    const STORAGE_KEYS = {
+        TASKS: 'todoTasks'
+    };
+
+    const tasks = ref([]);
+    const modalOpen = ref(false);
+    const searchQuery = ref('');
+    const currentFilter = ref('all');
+
+    const filteredTasks = computed(() => {
+        return tasks.value.filter(taskItem => {
+            const matchesSearch = searchQuery.value 
+                ? taskItem.text.toLowerCase().includes(searchQuery.value.toLowerCase())
+                : true;
+
+            let matchesFilter = false;
+            switch(currentFilter.value) {
+                case 'all':
+                    matchesFilter = true;
+                    break;
+                case 'complete':
+                    matchesFilter = taskItem.completed;
+                    break;
+                case 'incomplete':
+                    matchesFilter = !taskItem.completed;
+                    break;
+            }
+            
+            return matchesSearch && matchesFilter;
+        });
+    });
+
+    function loadTasksFromStorage() {
+        try {
+            if (typeof window === 'undefined') return [];
+            
+            const taskJson = localStorage.getItem(STORAGE_KEYS.TASKS);
+            return taskJson ? JSON.parse(taskJson) : [];
+        } catch (e) {
+            console.error("Error loading tasks:", e);
+            return [];
+        }
+    }
+
+    function saveTasksToStorage() {
+        try {
+            if (typeof window === 'undefined') return;
+            
+            localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(tasks.value));
+        } catch (e) {
+            console.error("Error saving tasks:", e);
+        }
+    }
+
+    function handleAddButtonClick() {
+        modalOpen.value = true;
+    }
+
+    function addTask(text) {
+        const newTask = {
+            id: 'task-' + Date.now(),
+            text: text,
+            completed: false
+        };
+        tasks.value.push(newTask);
+        saveTasksToStorage();
+    }
+
+    function handleToggle(taskId) {
+        const taskItem = tasks.value.find(t => t.id === taskId);
+        if (taskItem) {
+            taskItem.completed = !taskItem.completed;
+            saveTasksToStorage();
+        }
+    }
+
+    function handleDelete(taskId) {
+        const index = tasks.value.findIndex(t => t.id === taskId);
+        if (index !== -1) {
+            tasks.value.splice(index, 1);
+            saveTasksToStorage();
+        }
+    }
+
+    function handleEdit(payload) {
+        const taskItem = tasks.value.find(t => t.id === payload.id);
+        if (taskItem) {
+            taskItem.text = payload.newText;
+            saveTasksToStorage();
+        }
+    }
+
+    function setSearchQuery(query) {
+        searchQuery.value = query;
+    }
+
+    function setFilter(filter) {
+        currentFilter.value = filter;
+    }
+
+    onMounted(() => {
+        tasks.value = loadTasksFromStorage();
+    });
+
+    defineExpose({
+        setSearchQuery,
+        setFilter
+    });
 </script>
 
 <style scoped lang="scss">
@@ -165,6 +295,44 @@
             font-weight: 400;
             font-size: 20px;
             color: var(--text);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    }
+
+    @include tablet {
+        .todo-list {
+            padding-inline: 75px;
+
+            &__empty {
+                margin-top: 0px;
+
+                svg {
+                    transform: scale(0.7);
+                }
+            }
+
+            &__empty-text {
+                margin-top: 0px;
+            }
+        }
+    }
+
+    @include mobile {
+        .todo-list {
+            padding-inline: 25px;
+
+            &__empty {
+                margin-top: 0px;
+
+                svg {
+                    transform: scale(0.8);
+                }
+            }
+
+            &__empty-text {
+                margin-top: 0px;
+                font-size: 16px;
+            }
         }
     }
 </style>
