@@ -12,9 +12,9 @@
 </template>
 
 <script setup>
-    import SearchBar from '@/components/SearchBar.vue'
-    import FiltersDropdown from '@/components/FiltersDropdown.vue'
-    import ThemeToggle from '@/components/ThemeToggle.vue'
+    import SearchBar from '@cmp/SearchBar.vue'
+    import FiltersDropdown from '@cmp/FiltersDropdown.vue'
+    import ThemeToggle from '@cmp/ThemeToggle.vue'
 </script>
 
 <style scoped lang="scss">

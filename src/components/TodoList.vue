@@ -147,9 +147,9 @@
 
 <script setup>
     import { ref, computed, onMounted } from 'vue';
-    import TodoItem from '@/components/TodoItem.vue';
-    import AddButton from '@/components/AddButton.vue';
-    import AddTaskModal from '@/components/AddTaskModal.vue';
+    import TodoItem from '@cmp/TodoItem.vue';
+    import AddButton from '@cmp/AddButton.vue';
+    import AddTaskModal from '@cmp/AddTaskModal.vue';
 
     const STORAGE_KEYS = {
         TASKS: 'todoTasks'

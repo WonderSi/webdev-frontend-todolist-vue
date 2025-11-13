@@ -9,8 +9,8 @@
 
 <script setup>
     import { provide, ref } from 'vue';
-    import Header from '@/components/Header.vue';
-    import TodoList from '@/components/TodoList.vue';
+    import Header from '@cmp/Header.vue';
+    import TodoList from '@cmp/TodoList.vue';
 
     const todoListRef = ref(null);
 
