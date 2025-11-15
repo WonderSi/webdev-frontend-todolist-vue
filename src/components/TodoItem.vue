@@ -7,23 +7,25 @@
             v-model="task.completed"
             @change="$emit('toggle','task.id')"
         />
-        <span 
-            v-if="!isEditing"
-            :for="task.id" 
-            class="task-item__span"
-        >
-            {{ task.text }}
-        </span>
-        <input 
-            v-else
-            type="text"
-            class="task-item__edit-input"
-            v-model="editText"
-            ref="editInput"
-            @blur="saveEdit"
-            @keydown.enter="saveEdit"
-            @keydown.esc="cancelEdit"
-        />
+        <div class="task-item__content">
+            <span 
+                v-if="!isEditing"
+                :for="task.id" 
+                class="task-item__span"
+            >
+                {{ task.text }}
+            </span>
+            <input 
+                v-else
+                type="text"
+                class="task-item__edit-input"
+                v-model="editText"
+                ref="editInput"
+                @blur="saveEdit"
+                @keydown.enter="saveEdit"
+                @keydown.esc="cancelEdit"
+            />
+        </div>
         <div class="task-item__actions">
         <button 
             class="task-item__action task-item__action--edit" 
@@ -115,11 +117,13 @@
         padding-inline: 3px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         gap: 17px;
+        
         &__checkbox {
             width: 26px;
             height: 26px;
             border-radius: 4px;
             cursor: pointer;
+            flex-shrink: 0;
             &:checked {
                 accent-color: var(--button);
                 &:hover {
@@ -130,18 +134,62 @@
                 box-shadow: none;
             }
         }
-    
+
+        &__content {
+            flex: 1;
+            min-width: 0;
+            display: block;
+            position: relative;
+            height: 36px;
+        }
+
         &__span,
         &__edit-input {
-            font-weight: 500;
-            flex: 1;
-            padding: 2px 6px;
-            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 8px 12px;
+            margin: 0;
+            font-family: 'Kanit', 'Roboto', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 20px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            border: 0.5px solid transparent;
+            background-color: transparent;
+            color: var(--text);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: block;
+            padding-top: calc((36px - 20px) / 2);
+            padding-bottom: calc((36px - 20px) / 2);
+        }
+
+        &__span {
+            cursor: default;
+        }
+
+        &__edit-input {
+            background-color: var(--bg);
+            padding-left: 12px;
+            padding-right: 12px;
+            
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px var(--input-shadow);
+                border-color: var(--input-shadow);
+            }
         }
     
         &__actions {
             display: flex;
             gap: 10px;
+            flex-shrink: 0;
         }
     
         &__action {
@@ -150,9 +198,18 @@
             color: var(--icon-gray-color);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            
             svg {
-                @include flex-center();
+                width: 18px;
+                height: 18px;
             }
+            
             &--edit {
                 &:hover {
                     color: var(--icon-purple);
@@ -164,13 +221,15 @@
                 }
             }
         }
+        
         &--completed {
             .task-item__span {
-            color: var(--text-crossed);
-            text-decoration: line-through;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+                color: var(--text-crossed);
+                text-decoration: line-through;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
             }
         }
+        
         &--removing {
             transform: translateX(100%);
             opacity: 0;
@@ -186,6 +245,25 @@
         &:hover {
             button {
                 opacity: 1;
+            }
+        }
+
+        @include tablet {
+            &__span,
+            &__edit-input {
+                max-width: 375px;
+                padding: 6px 10px;
+                min-height: 34px;
+            }
+        }
+
+        @include mobile {
+            &__span,
+            &__edit-input {
+                max-width: 200px;
+                font-size: 14px;
+                padding: 5px 8px;
+                min-height: 32px;
             }
         }
     }

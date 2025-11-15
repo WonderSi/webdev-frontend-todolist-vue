@@ -31,9 +31,10 @@
 <style scoped lang="scss">
     .search-bar {
         position: relative;
+        width: 595px;
 
         &__input {
-            width: 595px;
+            width: 100%;
             padding: 6px 16px;
             font-family: 'Kanit', 'Roboto', sans-serif;
             font-weight: 400;
@@ -65,9 +66,7 @@
 
     @include tablet {
         .search-bar {
-            &__input {
-                width: 425px;
-            }
+            width: 425px;
 
             &__submit {
                 right: 3%;
@@ -77,8 +76,9 @@
 
     @include mobile {
         .search-bar {
+            width: 280px;
             &__input {
-                width: 280px;
+
                 font-size: 12px;
             }
 
